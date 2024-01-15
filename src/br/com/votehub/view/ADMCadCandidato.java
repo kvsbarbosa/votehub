@@ -65,96 +65,96 @@ public class ADMCadCandidato extends JFrame {
 		JPanel panel = new JPanel();
 		panel.setBorder(new BevelBorder(BevelBorder.RAISED, null, null, null, null));
 		contentPane.add(panel, "cell 2 1 3 6,grow");
-		panel.setLayout(new MigLayout("fill", "[][][][][][][][][][][][][][][]", "[][][][][][][][][][][][][]"));
+		panel.setLayout(new MigLayout("fill", "[][][][][][][][][][][][][][][][]", "[][][][][][][][][][][][][]"));
 
 		ImageIcon cv = new ImageIcon("./icons/menu_cadastro/cad_cand.png");
 		Image cvImg = cv.getImage().getScaledInstance(70, 70, Image.SCALE_SMOOTH);
 		ImageIcon resizedCv = new ImageIcon(cvImg);
 		JLabel icon = new JLabel(resizedCv);
-		panel.add(icon, "cell 0 1 29 1,alignx center,aligny center");
+		panel.add(icon, "cell 0 1 30 1,alignx center,aligny center");
 
 		JLabel lblCadCandidato = new JLabel("Cadastro de Candidato");
-		panel.add(lblCadCandidato, "cell 0 2 29 1,alignx center");
+		panel.add(lblCadCandidato, "cell 0 2 30 1,alignx center");
 		lblCadCandidato.setFont(new Font("Tahoma", Font.BOLD, 22));
 		URL resource = ADMCadCandidato.class.getClassLoader().getResource("icons8-câmera-100.png");
 
 		JLabel lblCadNome = new JLabel("Nome :");
 		lblCadNome.setBounds(206, 150, 38, 14);
 		lblCadNome.setFont(new Font("Tahoma", Font.BOLD, 11));
-		panel.add(lblCadNome, "cell 4 4 4 1,alignx right");
+		panel.add(lblCadNome, "cell 4 4 5 1,alignx right");
 
 		fieldNomeCad = new JTextField();
 		fieldNomeCad.setBounds(248, 150, 359, 20);
-		panel.add(fieldNomeCad, "cell 8 4,growx");
+		panel.add(fieldNomeCad, "cell 9 4,growx");
 		fieldNomeCad.setColumns(10);
 
 		JLabel lblCadNumCand = new JLabel("Nº Candidato :");
 		lblCadNumCand.setBounds(165, 200, 79, 14);
 		lblCadNumCand.setFont(new Font("Tahoma", Font.BOLD, 11));
-		panel.add(lblCadNumCand, "cell 4 5 4 1,alignx right");
+		panel.add(lblCadNumCand, "cell 4 5 5 1,alignx right");
 
 		fieldNumCad = new JTextField();
 		fieldNumCad.setBounds(248, 200, 359, 20);
-		panel.add(fieldNumCad, "cell 8 5,growx");
+		panel.add(fieldNumCad, "cell 9 5,growx");
 		fieldNumCad.setColumns(10);
-
-		JButton btnVoltarCad = new JButton("VOLTAR");
-		btnVoltarCad.setBounds(44, 570, 81, 23);
-		btnVoltarCad.setFont(new Font("Tahoma", Font.BOLD, 12));
-		btnVoltarCad.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				ADMCadastro admCadastro = new ADMCadastro();
-				admCadastro.setVisible(true);
-				dispose();
-			}
-		});
 
 		JLabel lblCadCargo = new JLabel("Cargo :");
 		lblCadCargo.setBounds(205, 250, 39, 14);
 		lblCadCargo.setFont(new Font("Tahoma", Font.BOLD, 11));
-		panel.add(lblCadCargo, "cell 4 6 4 1,alignx right");
+		panel.add(lblCadCargo, "cell 4 6 5 1,alignx right");
 
 		JComboBox comboBoxCargo = new JComboBox<>(new String[] { "Reitor", "Diretor" });
 		comboBoxCargo.setBounds(248, 246, 130, 20);
-		panel.add(comboBoxCargo, "cell 8 6");
+		panel.add(comboBoxCargo, "cell 9 6");
 
 		JLabel lblCadIdVotacao = new JLabel("Nº da Votação :");
 		lblCadIdVotacao.setBounds(166, 300, 78, 14);
 		lblCadIdVotacao.setFont(new Font("Tahoma", Font.BOLD, 11));
-		panel.add(lblCadIdVotacao, "cell 4 7 4 1,alignx right");
+		panel.add(lblCadIdVotacao, "cell 4 7 5 1,alignx right");
 
 		comboBoxNumeroVotacao = new JComboBox<>();
 		comboBoxNumeroVotacao.setBounds(248, 296, 50, 22);
-		panel.add(comboBoxNumeroVotacao, "cell 8 7");
+		panel.add(comboBoxNumeroVotacao, "cell 9 7");
 
 		lblImg = new JLabel("");
 		lblImg.setIcon(new ImageIcon(resource));
 		lblImg.setBounds(350, 350, 128, 128);
-		panel.add(lblImg, "cell 8 10");
-		panel.add(btnVoltarCad, "cell 4 11");
+		panel.add(lblImg, "cell 9 10");
+		
+				JButton btnAddImg = new JButton("Adicionar Foto");
+				btnAddImg.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						try {
+							addImg();
+						} catch (BusinessException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						} catch (IOException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
 
-		JButton btnAddImg = new JButton("Adicionar Foto");
-		btnAddImg.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				try {
-					addImg();
-				} catch (BusinessException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				} catch (IOException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-
-			}
-		});
-		btnAddImg.setBounds(350, 484, 100, 23);
-		panel.add(btnAddImg, "cell 7 11 2 1,alignx center,aligny center");
+					}
+				});
+				btnAddImg.setBounds(350, 484, 100, 23);
+				panel.add(btnAddImg, "cell 10 10,alignx center,aligny center");
+		
+				JButton btnVoltarCad = new JButton("VOLTAR");
+				btnVoltarCad.setBounds(44, 570, 81, 23);
+				btnVoltarCad.setFont(new Font("Tahoma", Font.BOLD, 12));
+				btnVoltarCad.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						ADMCadastro admCadastro = new ADMCadastro();
+						admCadastro.setVisible(true);
+						dispose();
+					}
+				});
+				panel.add(btnVoltarCad, "cell 7 11");
 
 		JButton btnCadastrar = new JButton("CADASTRAR");
 		btnCadastrar.setBounds(684, 570, 109, 23);
 		btnCadastrar.setFont(new Font("Tahoma", Font.BOLD, 12));
-		panel.add(btnCadastrar, "cell 9 11");
+		panel.add(btnCadastrar, "cell 10 11");
 
 		btnCadastrar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {

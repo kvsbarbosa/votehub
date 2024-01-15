@@ -72,6 +72,7 @@ public class ADMPrincipal extends JFrame {
 		btnMenuCadastrar.setPreferredSize(new Dimension(220, 100));	
 		panel.add(btnMenuCadastrar, "cell 1 1");
 		btnMenuCadastrar.setFont(new Font("Tahoma", Font.BOLD, 12));
+		btnMenuCadastrar.setBorder(new BevelBorder(BevelBorder.RAISED, null, null, null, null));
 		btnMenuCadastrar.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 ADMCadastro admCadastro = new ADMCadastro();

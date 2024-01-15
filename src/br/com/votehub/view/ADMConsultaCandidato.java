@@ -1,9 +1,9 @@
 package br.com.votehub.view;
 
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Font;
+import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.SystemColor;
 import java.awt.event.ActionEvent;
@@ -11,6 +11,7 @@ import java.awt.event.ActionListener;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URL;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
 
 import javax.imageio.ImageIO;
@@ -29,12 +30,13 @@ import javax.swing.border.BevelBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+import com.mysql.cj.jdbc.exceptions.CommunicationsException;
+
 import br.com.votehub.controller.BusinessException;
 import br.com.votehub.controller.ControllerCandidato;
-import br.com.votehub.controller.ControllerVotante;
+import br.com.votehub.model.DAOs.DbException;
 import br.com.votehub.model.DAOs.DbIntegrityException;
 import br.com.votehub.model.vo.Candidato;
-import br.com.votehub.model.vo.Votante;
 import net.miginfocom.swing.MigLayout;
 
 public class ADMConsultaCandidato extends JFrame {
@@ -48,70 +50,80 @@ public class ADMConsultaCandidato extends JFrame {
 	private JLabel lblImg;
 	private String img_candidato;
 	private JList<String> list;
-    private DefaultListModel<String> listModel;
+	private DefaultListModel<String> listModel;
+
+	/**
+	 * Launch the application.
+	 */
+	public static void main(String[] args) {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					ADMConsultaCandidato frame = new ADMConsultaCandidato();
+					frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
 
 	public ADMConsultaCandidato() {
-		setExtendedState(JFrame.MAXIMIZED_BOTH);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 558, 398);
+		setExtendedState(JFrame.MAXIMIZED_BOTH);
+		setBounds(100, 100, 800, 600);
 		contentPane = new JPanel();
-		contentPane.setBackground(new Color(164, 247, 176));
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-		setContentPane(contentPane);
-		contentPane.setLayout(new MigLayout("fill", "[grow][][][][][][][][][][grow][][grow]", "[][][][][][][][]"));
-		
-		 listModel = new DefaultListModel<>();
-	        
-	        JLabel lblTxtGeral = new JLabel("Candidatos cadastrados :");
-	        lblTxtGeral.setFont(new Font("Tahoma", Font.BOLD, 12));
-	        contentPane.add(lblTxtGeral, "cell 3 0 1 3");
-	        list = new JList<>(listModel);
-	        list.setBackground(SystemColor.menu);
-	        list.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
-	        contentPane.add(list, "cell 4 0 1 3,alignx center,aligny center");
-	        atualizarListaCandidatos();
 
-		JPanel panel = new JPanel();
-		panel.setBackground(SystemColor.menu);
-		contentPane.add(panel, "cell 1 0 1 3,alignx center,aligny center");
-		panel.setPreferredSize(new Dimension(800, 600));
-		panel.setLayout(new MigLayout("fill", "[][grow][][][][][grow][][][][grow][][][][][]",
-				"[][][][][][][][][][][][][][][][][][][][][][][][][][][][]"));
+		setContentPane(contentPane);
+		getContentPane().setLayout(new MigLayout("fill", "[409px][383px]", "[487px]"));
+
+		JPanel panelEsquerda = new JPanel();
+		panelEsquerda.setBackground(SystemColor.menu);
+		getContentPane().add(panelEsquerda, "cell 0 0,grow");
+		panelEsquerda
+				.setLayout(new MigLayout("fill", "[][][][][][][][][][][][]", "[][][][][][][][][][][][][][][][][]"));
+
+		ImageIcon cc = new ImageIcon("./icons/menu_consulta/con_cand.png");
+		Image ccImg = cc.getImage().getScaledInstance(70, 70, Image.SCALE_SMOOTH);
+		ImageIcon resizedCc = new ImageIcon(ccImg);
+		JLabel lblNewLabel = new JLabel(resizedCc);
+		panelEsquerda.add(lblNewLabel, "cell 6 0, alignx center");
 
 		JLabel lblTitulo = new JLabel("Candidatos");
-		lblTitulo.setFont(new Font("Tahoma", Font.BOLD, 17));
-		panel.add(lblTitulo, "cell 6 1,alignx center");
+		lblTitulo.setFont(new Font("Tahoma", Font.BOLD, 22));
+		panelEsquerda.add(lblTitulo, "cell 6 1,alignx center");
 
-		JLabel lblNumeroCandidato = new JLabel("N° Candidato");
-		lblNumeroCandidato.setFont(new Font("Tahoma", Font.PLAIN, 13));
-		panel.add(lblNumeroCandidato, "cell 2 7,alignx right");
+		JLabel lblNumeroCandidato = new JLabel("N° Candidato:");
+		lblNumeroCandidato.setFont(new Font("Tahoma", Font.BOLD, 11));
+		panelEsquerda.add(lblNumeroCandidato, "cell 5 4,alignx right");
 		textFieldNumeroCandidato = new JTextField();
-		panel.add(textFieldNumeroCandidato, "cell 5 7 3 1,growx");
+		panelEsquerda.add(textFieldNumeroCandidato, "cell 6 4 2 1,growx");
 
-		JLabel lblNome = new JLabel("Nome");
+		JLabel lblNome = new JLabel("Nome:");
 		lblNome.setHorizontalAlignment(SwingConstants.RIGHT);
-		lblNome.setFont(new Font("Tahoma", Font.PLAIN, 13));
-		panel.add(lblNome, "cell 2 9,alignx right");
+		lblNome.setFont(new Font("Tahoma", Font.BOLD, 11));
+		panelEsquerda.add(lblNome, "cell 5 5,alignx right");
 		textFieldNome = new JTextField();
-		panel.add(textFieldNome, "cell 5 9 3 1,growx");
+		panelEsquerda.add(textFieldNome, "cell 6 5 2 1,growx");
 
-		JLabel lblCargo = new JLabel("Cargo");
-		lblCargo.setFont(new Font("Tahoma", Font.PLAIN, 13));
-		panel.add(lblCargo, "cell 2 11,alignx right");
+		JLabel lblCargo = new JLabel("Cargo:");
+		lblCargo.setFont(new Font("Tahoma", Font.BOLD, 11));
+		panelEsquerda.add(lblCargo, "cell 5 6,alignx right");
 		textFieldCargo = new JTextField();
-		panel.add(textFieldCargo, "cell 5 11 4 1,growx");
-
-		JLabel lblVotacao = new JLabel("ID Votação");
-		lblVotacao.setFont(new Font("Tahoma", Font.PLAIN, 13));
-		panel.add(lblVotacao, "cell 2 13,alignx right");
+		panelEsquerda.add(textFieldCargo, "cell 6 6 2 1,growx");
 
 		URL resource = ADMConsultaCandidato.class.getClassLoader().getResource("icons8-câmera-100.png");
+
+		JLabel lblVotacao = new JLabel("ID Votação:");
+		lblVotacao.setFont(new Font("Tahoma", Font.BOLD, 11));
+		panelEsquerda.add(lblVotacao, "cell 5 7,alignx right");
 		textFieldVotacao = new JTextField();
 		textFieldVotacao.setEditable(false);
-		panel.add(textFieldVotacao, "cell 5 13,growx");
+		panelEsquerda.add(textFieldVotacao, "cell 6 7,growx");
 		lblImg = new JLabel("");
 		lblImg.setIcon(new ImageIcon(resource));
-		panel.add(lblImg, "cell 6 15,alignx center");
+		panelEsquerda.add(lblImg, "cell 6 9,alignx center");
 
 		JButton btnAddImg = new JButton("Adicionar Foto");
 		btnAddImg.addActionListener(new ActionListener() {
@@ -124,10 +136,35 @@ public class ADMConsultaCandidato extends JFrame {
 			}
 		});
 
-		panel.add(btnAddImg, "cell 9 15,growx");
+		panelEsquerda.add(btnAddImg, "cell 7 9");
+
+		JButton btnDeletar = new JButton("Deletar");
+		panelEsquerda.add(btnDeletar, "cell 7 11");
+		btnDeletar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					String numeroCandidato = textFieldNumeroCandidato.getText();
+
+					ControllerCandidato controller = new ControllerCandidato();
+					controller.deletarCandidato(numeroCandidato);
+
+					textFieldNumeroCandidato.setText("");
+					textFieldNome.setText("");
+					textFieldCargo.setText("");
+					textFieldVotacao.setText("");
+					lblImg.setIcon(new ImageIcon(resource));
+
+					JOptionPane.showMessageDialog(null, "Candidato deletado com sucesso.");
+				} catch (BusinessException error) {
+					JOptionPane.showMessageDialog(null, "O candidato não pode ser deletado.");
+				} catch (DbIntegrityException error2) {
+					JOptionPane.showMessageDialog(null, error2.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+				}
+			}
+		});
 
 		JButton btnEditar = new JButton("Editar");
-		panel.add(btnEditar, "cell 5 19,alignx center,aligny center");
+		panelEsquerda.add(btnEditar, "cell 5 11,alignx center");
 		btnEditar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
@@ -153,7 +190,7 @@ public class ADMConsultaCandidato extends JFrame {
 		});
 
 		JButton btnConsultar = new JButton("Consultar");
-		panel.add(btnConsultar, "cell 6 19,alignx center");
+		panelEsquerda.add(btnConsultar, "cell 6 11,alignx center");
 		btnConsultar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				String numeroCandidato = textFieldNumeroCandidato.getText();
@@ -171,40 +208,41 @@ public class ADMConsultaCandidato extends JFrame {
 			}
 		});
 
-		JButton btnDeletar = new JButton("Deletar");
-		panel.add(btnDeletar, "cell 7 19,alignx center");
-		btnDeletar.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				try {
-					String numeroCandidato = textFieldNumeroCandidato.getText();
-
-					ControllerCandidato controller = new ControllerCandidato();
-					controller.deletarCandidato(numeroCandidato);
-
-					textFieldNumeroCandidato.setText("");
-					textFieldNome.setText("");
-					textFieldCargo.setText("");
-					textFieldVotacao.setText("");
-					lblImg.setIcon(new ImageIcon(resource));
-
-					JOptionPane.showMessageDialog(null, "Candidato deletado com sucesso.");
-				} catch (BusinessException error) {
-					JOptionPane.showMessageDialog(null, "O candidato não pode ser deletado.");
-				} catch (DbIntegrityException error2) {
-					JOptionPane.showMessageDialog(null, error2.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
-				}
-			}
-		}); 
-
 		JButton btnVoltar = new JButton("VOLTAR");
-		panel.add(btnVoltar, "cell 0 26,growx");
+		panelEsquerda.add(btnVoltar, "cell 6 14,alignx center");
 		btnVoltar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				ADMMenuConsulta consulta = new ADMMenuConsulta();
-				consulta.setVisible(true);
+				ADMMenuConsulta tela = new ADMMenuConsulta();
+				tela.setVisible(true);
 				dispose();
 			}
 		});
+		
+		JPanel panelDireita = new JPanel();
+		panelDireita.setBorder(new BevelBorder(BevelBorder.RAISED, null, null, null, null));
+		panelDireita.setBackground(new Color(164, 247, 176));
+		getContentPane().add(panelDireita, "cell 1 0,grow");
+		panelDireita.setLayout(new MigLayout("fill", "[][][]", "[][][][][][][][][][][][]"));
+
+		listModel = new DefaultListModel<>();
+		JLabel lblTxtGeral = new JLabel("Candidatos cadastrados:");
+		lblTxtGeral.setFont(new Font("Tahoma", Font.BOLD, 18));
+		panelDireita.add(lblTxtGeral, "cell 1 2,alignx center,aligny center");
+		list = new JList<>(listModel);
+		list.setBackground(SystemColor.menu);
+		list.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
+		panelDireita.add(list, "cell 1 3,alignx center,aligny center");
+		atualizarListaCandidatos();
+	}
+
+	private void atualizarListaCandidatos() {
+		listModel.clear();
+		ControllerCandidato controllerCandidato = new ControllerCandidato();
+		List<Candidato> Candidatos = controllerCandidato.ExibirCandidatos();
+		for (Candidato candidato : Candidatos) {
+			listModel.addElement("Numero: " + candidato.getNumero_candidato() + " | Nome: " + candidato.getNome()
+					+ " | Cargo: " + candidato.getCargo());
+		}
 	}
 
 	private void exibirImagemNoLabel(JLabel label, String caminhoImagem) {
@@ -231,27 +269,4 @@ public class ADMConsultaCandidato extends JFrame {
 		}
 	}
 
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					ADMConsultaCandidato frame = new ADMConsultaCandidato();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
-	
-	 private void atualizarListaCandidatos() {
-		  
-	        listModel.clear();
-
-	        ControllerCandidato controllerCandidato = new ControllerCandidato();
-	        List<Candidato> Candidatos = controllerCandidato.ExibirCandidatos();
-	        for (Candidato candidato : Candidatos) {
-	            listModel.addElement("Numero: " + candidato.getNumero_candidato() + " | Nome: " + candidato.getNome() + " | Cargo: " + candidato.getCargo());
-	        }
-	    }
 }

@@ -1,6 +1,7 @@
 package br.com.votehub.view;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -45,10 +46,17 @@ public class ApurarDiretor extends JFrame {
     private String idVotacaoSelecionada;
 
     public static void main(String[] args) {
-        ApurarDiretor frame = new ApurarDiretor();
-        frame.setVisible(true);
-    }
-
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					ApurarDiretor frame = new ApurarDiretor();
+			        frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
     public ApurarDiretor() {
         setTitle("Apuração do Diretor");
         setExtendedState(JFrame.MAXIMIZED_BOTH);

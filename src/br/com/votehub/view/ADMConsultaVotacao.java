@@ -2,6 +2,7 @@ package br.com.votehub.view;
 
 import java.awt.EventQueue;
 import java.awt.Font;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.SQLException;
@@ -38,6 +39,7 @@ import java.awt.Dimension;
 import javax.swing.JComboBox;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
+import javax.swing.ImageIcon;
 
 import java.awt.SystemColor;
 
@@ -75,85 +77,77 @@ public class ADMConsultaVotacao extends JFrame {
 	public ADMConsultaVotacao() throws ParseException {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setExtendedState(JFrame.MAXIMIZED_BOTH);
-		setBounds(100, 100, 450, 300);
+		setBounds(100, 100, 800, 600);
 		contentPane = new JPanel();
-		contentPane.setBackground(new Color(164, 247, 176));
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		
 		setContentPane(contentPane);
-		contentPane.setLayout(new MigLayout("fill", "[grow][][][][][][][][][][grow][][grow]", "[][][][][][][][][]"));
+		getContentPane().setLayout(new MigLayout("fill", "[409px][383px]", "[487px]"));
 
-		JPanel panel = new JPanel();
-		panel.setBackground(SystemColor.menu);
-		contentPane.add(panel, "cell 1 0 1 3,alignx center,aligny center");
-		panel.setPreferredSize(new Dimension(800, 600));
-		panel.setLayout(new MigLayout("fill", "[grow][][][][][][][][][][][][][][grow][][grow]",
-				"[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][]"));
+		JPanel panelEsquerda = new JPanel();
+		panelEsquerda.setBackground(SystemColor.menu);
+		getContentPane().add(panelEsquerda, "cell 0 0,grow");
+		panelEsquerda
+				.setLayout(new MigLayout("fill", "[][][][][][][][][][][][]", "[][][][][][][][][][][][][][][][][]"));
+
+		ImageIcon cc = new ImageIcon("./icons/menu_consulta/con_votacao.png");
+		Image ccImg = cc.getImage().getScaledInstance(70, 70, Image.SCALE_SMOOTH);
+		ImageIcon resizedCc = new ImageIcon(ccImg);
+		JLabel lbl = new JLabel(resizedCc);
+		panelEsquerda.add(lbl, "cell 5 0, alignx center");
 
 		JLabel lblTitulo = new JLabel("Votação");
-		panel.add(lblTitulo, "cell 5 1,alignx center");
-		lblTitulo.setFont(new Font("Tahoma", Font.BOLD, 17));
+		panelEsquerda.add(lblTitulo, "cell 5 1,alignx center");
+		lblTitulo.setFont(new Font("Tahoma", Font.BOLD, 22));
 
-		JLabel lblIdVotacao = new JLabel("ID");
-		lblIdVotacao.setHorizontalAlignment(SwingConstants.RIGHT);
-		panel.add(lblIdVotacao, "cell 0 3,alignx right");
-		lblIdVotacao.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		JLabel lblIdVotacao = new JLabel("ID:");
+		panelEsquerda.add(lblIdVotacao, "cell 4 4,alignx right");
+		lblIdVotacao.setFont(new Font("Tahoma", Font.BOLD, 11));
 
 		textFieldIdVotacao = new JTextField();
-		panel.add(textFieldIdVotacao, "cell 1 3 11 1,growx");
+		panelEsquerda.add(textFieldIdVotacao, "cell 5 4 2 1,growx");
 		textFieldIdVotacao.setText("");
 		textFieldIdVotacao.setColumns(10);
 
-		JLabel lblNomeVotacao = new JLabel("Nome");
-		panel.add(lblNomeVotacao, "cell 0 4,alignx right");
-		lblNomeVotacao.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		JLabel lblNomeVotacao = new JLabel("Nome:");
+		panelEsquerda.add(lblNomeVotacao, "cell 4 5,alignx right");
+		lblNomeVotacao.setFont(new Font("Tahoma", Font.BOLD, 11));
 
 		textNomeVotacao = new JTextField();
-		panel.add(textNomeVotacao, "cell 1 4 11 1,growx");
+		panelEsquerda.add(textNomeVotacao, "cell 5 5 2 1,growx");
 		textNomeVotacao.setColumns(10);
-		
-		listModel = new DefaultListModel<>();
-        
-        JLabel lblNewLabel = new JLabel("Votações Cadastradas:");
-        lblNewLabel.setFont(new Font("Tahoma", Font.BOLD, 12));
-        contentPane.add(lblNewLabel, "cell 3 0 1 3");
-        list = new JList<>(listModel);
-        list.setBackground(SystemColor.menu);
-        list.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
-        contentPane.add(list, "cell 4 0 1 3,alignx center,aligny center");
-        atualizarListaVotacao();
 
-		JLabel lblDataInicio = new JLabel("Data e hora inicial");
-		panel.add(lblDataInicio, "cell 0 5,alignx right");
-		lblDataInicio.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		JLabel lblDataInicio = new JLabel("Data e hora inicial:");
+		panelEsquerda.add(lblDataInicio, "cell 4 6,alignx right");
+		lblDataInicio.setFont(new Font("Tahoma", Font.BOLD, 11));
 
 		JFormattedTextField formattedDataInico = new JFormattedTextField(new MaskFormatter("##/##/#### ##:##:##"));
-		panel.add(formattedDataInico, "cell 1 5 11 1,growx");
+		panelEsquerda.add(formattedDataInico, "cell 5 6 2 1,growx");
 		formattedDataInico
 				.setToolTipText("Informe a data e horario de termino no formato dia/mês/ano hora/minuto/segundo");
 
-		JLabel lblDataFim = new JLabel("Data e hora final");
-		panel.add(lblDataFim, "cell 0 7,alignx right");
+		JLabel lblDataFim = new JLabel("Data e hora final: ");
+		panelEsquerda.add(lblDataFim, "cell 4 7,alignx right");
 		lblDataFim.setHorizontalAlignment(SwingConstants.RIGHT);
-		lblDataFim.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		lblDataFim.setFont(new Font("Tahoma", Font.BOLD, 11));
 
 		JFormattedTextField formattedDataFim = new JFormattedTextField(new MaskFormatter("##/##/#### ##:##:##"));
-		panel.add(formattedDataFim, "cell 1 7 11 1,growx");
+		panelEsquerda.add(formattedDataFim, "cell 5 7 2 1,growx");
 		formattedDataFim.setText("");
 		formattedDataFim
 				.setToolTipText("Informe a data e horario de termino no formato dia/mês/ano hora/minuto/segundo");
 
-		JLabel lblTipoVotacao = new JLabel("Tipo de Votação");
+		JLabel lblTipoVotacao = new JLabel("Tipo de Votação: ");
 		lblTipoVotacao.setHorizontalAlignment(SwingConstants.RIGHT);
-		lblTipoVotacao.setFont(new Font("Tahoma", Font.PLAIN, 13));
-		panel.add(lblTipoVotacao, "cell 0 9,alignx right");
+		lblTipoVotacao.setFont(new Font("Tahoma", Font.BOLD, 11));
+		panelEsquerda.add(lblTipoVotacao, "cell 4 8,alignx right");
 
 		JComboBox comboBoxTipoVotacao = new JComboBox();
 		comboBoxTipoVotacao.setModel(new DefaultComboBoxModel(new String[] { "candidatos", "propostas" }));
-		panel.add(comboBoxTipoVotacao, "cell 1 9 10 1,growx");
+		panelEsquerda.add(comboBoxTipoVotacao, "cell 5 8,growx");
 
 		JButton btnConsultar = new JButton("Consultar");
-		panel.add(btnConsultar, "cell 2 19");
+		panelEsquerda.add(btnConsultar, "cell 5 11,alignx center");
 		btnConsultar.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent e) {
@@ -197,7 +191,7 @@ public class ADMConsultaVotacao extends JFrame {
 		});
 
 		JButton btnEditar = new JButton("Editar");
-		panel.add(btnEditar, "cell 5 19");
+		panelEsquerda.add(btnEditar, "cell 4 11,alignx center,aligny center");
 		btnEditar.addActionListener(new ActionListener() {
 
 		    public void actionPerformed(ActionEvent e) {
@@ -235,7 +229,7 @@ public class ADMConsultaVotacao extends JFrame {
 		});
 
 		JButton btnDeletar = new JButton("Deletar");
-		panel.add(btnDeletar, "cell 7 19");
+		panelEsquerda.add(btnDeletar, "cell 6 11,alignx center");
 		btnDeletar.addActionListener(new ActionListener() {
 
 		    public void actionPerformed(ActionEvent e) {
@@ -270,7 +264,7 @@ public class ADMConsultaVotacao extends JFrame {
 		});
 
 		JButton btnVoltar = new JButton("VOLTAR");
-		panel.add(btnVoltar, "cell 0 29");
+		panelEsquerda.add(btnVoltar, "cell 5 14,alignx center");
 		btnVoltar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 
@@ -279,7 +273,27 @@ public class ADMConsultaVotacao extends JFrame {
 				dispose();
 			}
 		});
+		
+		JPanel panelDireita = new JPanel();
+		panelDireita.setBorder(new BevelBorder(BevelBorder.RAISED, null, null, null, null));
+		panelDireita.setBackground(new Color(164, 247, 176));
+		getContentPane().add(panelDireita, "cell 1 0,grow");
+		panelDireita.setLayout(new MigLayout("fill", "[][][]", "[][][][][][][][][][][][]"));
+		
+		listModel = new DefaultListModel<>();
+        
+        JLabel lblNewLabel = new JLabel("Votações Cadastradas:");
+        lblNewLabel.setFont(new Font("Tahoma", Font.BOLD, 18));
+        panelDireita.add(lblNewLabel, "cell 1 2,alignx center,aligny center");
+        list = new JList<>(listModel);
+        list.setBackground(SystemColor.menu);
+        list.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
+        panelDireita.add(list, "cell 1 3,alignx center,aligny center");
+        atualizarListaVotacao();
+		
+		
 	}
+	
 	
 	 private void atualizarListaVotacao() {
 		  
